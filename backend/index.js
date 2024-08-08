@@ -4,8 +4,10 @@ require("dotenv").config();
 
 const db = require("./connection/connection");
 
+// initialize
 const app = express();
 const morgan = require("morgan")
+const cors = require('cors')
 const port = process.env.PORT;
 const bodyParser = require("body-parser");
 
@@ -15,8 +17,10 @@ const ProductRoute = require("./Route/productRoute");
 
 // const{jwtMiddleware}=require('./middleware/middleware');
 
+//server uses
 app.use(bodyParser.json());
 app.use(morgan('dev'))
+app.use(cors())
 
 app.use(express.static(__dirname+ '/public/uploads'))
 
