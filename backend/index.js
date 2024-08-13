@@ -6,27 +6,27 @@ const db = require("./connection/connection");
 
 // initialize
 const app = express();
-const morgan = require("morgan")
-const cors = require('cors')
+const morgan = require("morgan");
+const cors = require("cors");
 const port = process.env.PORT;
 const bodyParser = require("body-parser");
 
 const UserRoute = require("./Route/userRoute");
-const CategoryRoute = require('./Route/categoryRoute');
+const CategoryRoute = require("./Route/categoryRoute");
 const ProductRoute = require("./Route/productRoute");
 
 // const{jwtMiddleware}=require('./middleware/middleware');
 
 //server uses
 app.use(bodyParser.json());
-app.use(morgan('dev'))
-app.use(cors())
+app.use(morgan("dev"));
+app.use(cors());
 
-app.use(express.static(__dirname+ '/public/uploads'))
+app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 
 app.use("/api", UserRoute);
-app.use('/api',CategoryRoute);
-app.use('/api',ProductRoute);
+app.use("/api", CategoryRoute);
+app.use("/api", ProductRoute);
 
 app.get("/", (req, res) => {
   res.send("This is an ecommerce server");

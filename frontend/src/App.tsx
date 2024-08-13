@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes,Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './layout/Header'
 import Home from './pages/Home/Home'
 import Contact from './pages/contact/Contact'
@@ -20,7 +20,7 @@ import Defaultlayout from './layout/default/default'
 import AddProductForm from './pages/dashboard/product/add-products'
 import GetProduct from './pages/dashboard/product/get-product'
 import GetCustomers from './pages/dashboard/product/get-customers'
-import GetCategory from './pages/dashboard/product/get-category'
+import GetCategory from './pages/dashboard/category/get-category'
 import GetOrders from './pages/dashboard/product/get-order'
 
 
@@ -31,35 +31,37 @@ const App = () => {
     <BrowserRouter>
 
       <Routes>
-        <Route path="*" element ={<NotFound/>}/>
+        <Route path="*" element={<NotFound />} />
 
-        <Route element={<Defaultlayout/>}>
-        <Route path="/" element={<Home />}/>
-         </Route>
+        <Route element={<Defaultlayout />}>
+          <Route path="/" element={<Home />} />
+          
+          <Route path="/contact" element={<Contact />} />
+        <Route path="/pricing" element={<Pricing />} />
+
+        <Route path="/products" element={<Product />} />
+        <Route path="/products/:id" element={<SingleProduct />} />
+
+        <Route path="/Post" element={<Post />} />
+        <Route path="/Post/:id" element={<PostDetailPage />} />
+        <Route path="/aboutus" element={<About />} />
+
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/register" element={<Register />} />
+        </Route>
 
 
-            <Route path="/contact" element={<Contact/>} />
-            <Route path="/pricing" element={<Pricing/>} />
+        
 
-            <Route path="/products" element={<Product/>} />
-            <Route path="/products/:id" element={<SingleProduct/>} />
+        <Route element={<Authlayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/add-product" element={<AddProductForm />} />
+          <Route path="/dashboard/get-product" element={<GetProduct />} />
+          <Route path="/dashboard/get-customers" element={<GetCustomers />} />
+          <Route path="/dashboard/get-category" element={<GetCategory />} />
+          <Route path="/dashboard/get-order" element={<GetOrders />} />
 
-            <Route path="/Post" element={<Post />} />
-            <Route path="/Post/:id" element={<PostDetailPage />} />
-            <Route path="/aboutus" element={<About/>} />
-
-            <Route path="/signin" element={<Signin/>} />
-            <Route path="/register" element={<Register/>} />
-
-            <Route element={<Authlayout/>}>
-            <Route path="/dashboard" element={<Dashboard/>} />
-            <Route path="/dashboard/add-product" element={<AddProductForm/>} />
-            <Route path="/dashboard/get-product" element={<GetProduct/>} />
-            <Route path="/dashboard/get-customers" element={<GetCustomers/>} />
-            <Route path="/dashboard/get-category" element={<GetCategory/>} />
-            <Route path="/dashboard/get-order" element={<GetOrders/>} />
-
-             </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   )
