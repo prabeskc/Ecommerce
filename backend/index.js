@@ -14,6 +14,7 @@ const bodyParser = require("body-parser");
 const UserRoute = require("./Route/userRoute");
 const CategoryRoute = require("./Route/categoryRoute");
 const ProductRoute = require("./Route/productRoute");
+const OrderRoute = require("./Route/orderRoute")
 
 // const{jwtMiddleware}=require('./middleware/middleware');
 
@@ -27,6 +28,7 @@ app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 app.use("/api", UserRoute);
 app.use("/api", CategoryRoute);
 app.use("/api", ProductRoute);
+app.use("/api",OrderRoute);
 
 app.get("/", (req, res) => {
   res.send("This is an ecommerce server");

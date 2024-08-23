@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import Button from '../component/reusable/button/button';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 const NavItem = [
   {
@@ -27,6 +28,9 @@ const NavItem = [
 
 
 const Header = () => {
+
+const {accessToken}= useAuth();
+
   const location = useLocation();
   const [islogin, setIsLogin]=useState(false);
 
@@ -68,33 +72,39 @@ useEffect(()=>{
           </ul>
         </div>
         <div className='flex gap-2 items-center'>
-          <Link to="/signin">
-          <Button
-          buttonType={"button"}
-          buttonColor={islogin?{primary :true}:{outline:true}}
-          rounded
-          // onClick={()=>setIsLogin(true)}
-          >
-            Sign in</Button>
-            </Link>
-        <Link to="/register">
-            <Button 
-          buttonType={"button"}
-          buttonColor={islogin?{outline :true}:{primary:true}}
-          rounded
-          // onClick={()=>setIsLogin(false)}
-          >
-            Register</Button>
-            </Link>
-            <Link to="/dashboard">
-            <Button 
-          buttonType={"button"}
-          buttonColor={islogin?{outline :true}:{secondary:true}}
-          rounded
-          // onClick={()=>setIsLogin(false)}
-          >
-            Dashboard</Button>
-            </Link>
+        {
+            !accessToken ?
+              <>
+            
+                <Link to="/signin">
+                  <Button
+                    buttonType={"button"}
+                    buttonColor={islogin ? { primary: true } : { outline: true }}
+                    rounded
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button
+                    buttonType={"button"}
+                    buttonColor={!islogin ? { primary: true } : { outline: true }}
+                    rounded
+                  >
+                    Register
+                  </Button>
+                </Link>
+              </> :
+              <Link to="/dashboard">
+                <Button
+                  buttonType={"button"}
+                  buttonColor={{ secondary: true }}
+                  rounded
+                >
+                  Dashboard
+                </Button>
+              </Link>
+          }
         </div>
       </div>
     </nav>

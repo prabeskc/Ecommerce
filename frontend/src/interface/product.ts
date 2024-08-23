@@ -12,6 +12,6 @@ export interface Iproduct{
 }
 
 export interface ICategory{
-    id: string
+    _id: string
     categoryName: string
 }

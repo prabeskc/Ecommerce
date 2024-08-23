@@ -13,7 +13,7 @@ const {
 const router = express.Router();
 
 router.post("/register", CreateUser);
-router.get("/users", getAllUser);
+router.get("/users",jwtMiddleware, getAllUser);
 router.patch("/update-user/:id",jwtMiddleware, updateUser);
 router.post("/login", logIn);
 router.get("/getUser/:id",jwtMiddleware,getUserById);

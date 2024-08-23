@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 const Authlayout = () => {
   const navigate = useNavigate();
   const {accessToken} = useAuth();
-  console.log(accessToken)
 
   useEffect(()=>{
     if (!accessToken || accessToken === undefined){
@@ -15,9 +14,11 @@ const Authlayout = () => {
   },[accessToken, navigate])
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    <div className="w-full flex">
       <SideBar/>
+      <div className='ml-60 w-full overflow-hidden'>
       <Outlet/>
+      </div>
     </div>
   )
 }

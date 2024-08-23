@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
-import Button from "../../../component/reusable/button/button";
-import { AppConfig } from "../../../config/app.config";
-import { errorMessage } from "../../../utils/helper";
+import Button from "../../../../component/reusable/button/button";
+import { AppConfig } from "../../../../config/app.config";
+import { displayImage, errorMessage } from "../../../../utils/helper";
 import {
   Select,
   SelectContent,
@@ -17,10 +17,12 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../../../@/components/ui/select";
+} from "../../../../@/components/ui/select";
 import useSWR from "swr";
-import { getCategory } from "../../../API/categoryApi";
+import { getCategory } from "../../../../API/categoryApi";
 import { Label } from "flowbite-react";
+import { getProductById } from "../../../../API/productApi";
+import { Iproduct } from "../../../../interface/product";
 
 interface IProductForm {
   product_name: string;
@@ -39,9 +41,14 @@ const productValidation = yup.object().shape({
   product_category: yup.string().required("Category is required"),
   total_product: yup.number().required("Product is required"),
 });
+interface Props {
+  product: Iproduct;
+}
 
-const AddProductForm = () => {
+const UpdateProductForm = ({ product }: Props) => {
   const { data: category } = useSWR("/viewcategory", getCategory);
+  const navigate = useNavigate();
+  console.log(product);
 
   const {
     register,
@@ -52,24 +59,36 @@ const AddProductForm = () => {
     formState: { errors },
   } = useForm<IProductForm>({
     resolver: yupResolver(productValidation),
+    defaultValues: {
+      product_name: product?.productName || "",
+      product_category: product?.productCategory._id || "",
+      product_price: Number(product?.productPrice) || 0,
+      product_rating: Number(product?.productRating) || 0,
+      product_description: product?.productDescription || "",
+      total_product: product?.totalProduct || 0,
+      product_image:product.productImage || ""
+    },
   });
 
-  const onAddProduct = useCallback(
+  const onUpdaeProduct = useCallback(
     async (values: IProductForm) => {
       const productImage = values.product_image?.[0];
       const ProductData = new FormData();
 
-      ProductData.append("productName",String( values.product_name));
+      ProductData.append("productName", String(values.product_name));
       ProductData.append("productPrice", String(values.product_price));
-      ProductData.append("productDescription",String(values.product_description) );
+      ProductData.append(
+        "productDescription",
+        String(values.product_description)
+      );
       ProductData.append("productRating", String(values.product_rating));
       ProductData.append("totalProduct", String(values.total_product));
       ProductData.append("productCategory", String(values.product_category));
       ProductData.append("productImage", productImage);
 
       try {
-        const { data } = await axios.post(
-          `${AppConfig.API_URL}/addproduct`,
+        const { data } = await axios.put(
+          `${AppConfig.API_URL}/updateproduct/${product._id}`,
           ProductData,
           {
             headers: {
@@ -77,34 +96,42 @@ const AddProductForm = () => {
             },
           }
         );
+
         toast.success(data.response?.message || "Added successfully");
-        reset();
+      navigate('/dashboard/get-product')
       } catch (error: unknown) {
         toast.error(errorMessage(error));
       }
     },
-    [reset]
+    [product,reset]
   );
 
   return (
     <div>
-
-<div className='my-2 flex justify-end'>
+      <div className="my-2 flex justify-end">
         <Link to={"/dashboard/get-product"}>
-        <Button
-        buttonType={'button'}
-        buttonColor={{
-          primary:true,
-        }}>
-          Go Back
-        </Button>
+          <Button
+            buttonType={"button"}
+            buttonColor={{
+              primary: true,
+            }}
+          >
+            Go Back
+          </Button>
         </Link>
       </div>
 
       <form
         className="max-w-sm mx-auto border rounded-lg"
-        onSubmit={handleSubmit(onAddProduct)}
+        onSubmit={handleSubmit(onUpdaeProduct)}
       >
+        <div>
+          <img
+            src={displayImage(product.productImage)}
+            alt={product.productName}
+            className="h-[200px] w-[200px] mx-auto"
+          />
+        </div>
         <div className="m-5">
           <div className="mb-5">
             <label
@@ -272,7 +299,7 @@ const AddProductForm = () => {
                 primary: true,
               }}
             >
-              Add Product
+              Update Product
             </Button>
           </div>
         </div>
@@ -281,4 +308,4 @@ const AddProductForm = () => {
   );
 };
 
-export default AddProductForm;
+export default UpdateProductForm;

@@ -70,7 +70,7 @@ exports.updateProduct = async (req, res) => {
       productDescription: productDescription,
       productRating: productRating,
       productCategory: productCategory,
-      // productImage: req.file.path,
+      productImage: req.file.path,
       totalProduct: totalProduct,
     },
     { new: true }
@@ -115,4 +115,16 @@ exports.findProduct = (req, res) => {
     .catch(() => {
       return res.status(400).json({ error: "something went wrong" });
     });
+
 };
+
+
+exports.getProductById = async (req, res) => {
+  const { id } = req.params;
+  const products = await ProductModel.findById(id)
+
+  if (!products) {
+    return res.json({ error: "Failed to get product" }).status(400);
+  }
+  res.send(products);
+}

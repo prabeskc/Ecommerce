@@ -19,9 +19,12 @@ import Authlayout from './layout/auth-layout/authlayout'
 import Defaultlayout from './layout/default/default'
 import AddProductForm from './pages/dashboard/product/add-products'
 import GetProduct from './pages/dashboard/product/get-product'
-import GetCustomers from './pages/dashboard/product/get-customers'
 import GetCategory from './pages/dashboard/category/get-category'
 import GetOrders from './pages/dashboard/product/get-order'
+import CustomerPage from './pages/dashboard/customers/get-customer'
+// import UpdateProduct from './pages/dashboard/product/update-product'
+// import UpdateProductForm from './pages/dashboard/product/update-product'
+import UpdateProductPage from './pages/dashboard/product/update-product/update-product'
 
 
 
@@ -56,8 +59,9 @@ const App = () => {
         <Route element={<Authlayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/add-product" element={<AddProductForm />} />
+          <Route path='/dashboard/update-product/:id' element={<UpdateProductPage/>}/>
           <Route path="/dashboard/get-product" element={<GetProduct />} />
-          <Route path="/dashboard/get-customers" element={<GetCustomers />} />
+          <Route path="/dashboard/get-customers" element={<CustomerPage />} />
           <Route path="/dashboard/get-category" element={<GetCategory />} />
           <Route path="/dashboard/get-order" element={<GetOrders />} />
 
