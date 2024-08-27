@@ -40,8 +40,21 @@ const Signin = () => {
        
         Cookie.set('accessToken',data.accessToken);
         Cookie.set('userId', data.user._id);
+        Cookie.set('role',data.user.role);
 
-        navigate('/dashboard')
+        console.log(data)
+
+        switch(data.user.role){
+          case "admin":
+            navigate('/dashboard')
+            break;
+            case "user":
+              navigate('/user-dashboard')
+              break;
+              default:
+              break;
+        }
+
         toast.success(data.message || "login sucessfully")
 
     }catch(error){

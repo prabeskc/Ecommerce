@@ -3,7 +3,7 @@ import { SideBar } from "../sidebar";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect } from "react";
 
-const Authlayout = () => {
+const Adminlayout = () => {
   const navigate = useNavigate();
   const { accessToken, role } = useAuth();
 
@@ -11,16 +11,12 @@ const Authlayout = () => {
     if (!accessToken || accessToken === undefined) {
       navigate("/signin");
     }
-  }, [accessToken, navigate]);
+    if (accessToken && role === "user") {
+      navigate("/user-dashboard");
+    }
+  }, [accessToken, navigate, role]);
 
-  return (
-    <div className="w-full flex">
-      {role && <SideBar role={role} />}
-      <div className="ml-60 w-full overflow-hidden">
-        <Outlet />
-      </div>
-    </div>
-  );
+  return <Outlet />;
 };
 
-export default Authlayout;
+export default Adminlayout;
