@@ -1,5 +1,5 @@
 const OrderModel = require("../Model/orderModel");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 exports.createOrder = async (req, res) => {
   const { userId, productId, totalOrder } = req.body;
@@ -71,3 +71,25 @@ exports.deleteOrder = async (req, res) => {
   }
   return res.status(200).json({ message: "Order deleted" });
 };
+
+exports.updateOrderedProduct = async (req, res) => {
+  const { orderId: _id } = req.params
+  const { totalOrder } = req.body;
+
+  const order = await OrderModel.findByIdAndUpdate(
+    _id,
+    { totalOrder },
+    { new: true }
+  );
+  if (!order) {
+    return res.status(400).json({ error: "Order not found" })
+  }
+  const updateOrder = await order.populate("product")
+  res.send(updateOrder)
+}
+
+exports.deleteOrderedProduct = async (req, res) => {
+  const { orderId: _id } = req.params
+  const order = await OrderModel.findByIdAndDelete(_id);
+  return res.status(200).json({ error: "Order deleted successfully" })
+}

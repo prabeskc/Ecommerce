@@ -1,30 +1,119 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "../../../@/components/ui/table";
-import { getOrderProducts } from "../../../redux/slice/order-slice";
+import {
+  getOrderProducts,
+  setRemoveProduct,
+  updateProductToCart,
+} from "../../../redux/slice/order-slice";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
+import { IOrder } from "../../../interface/order";
+import { toast } from "sonner";
+import { errorMessage } from "../../../utils/helper";
+import axios from "axios";
+import { AppConfig } from "../../../config/app.config";
+import Button from "../../../component/reusable/button/button";
+import { useAuth } from "../../../hooks/useAuth";
 
 const Cart = () => {
+  const [totalOrder,setTotalOrder]= useState(0)
+  const [totalPrice,setTotalPrice]= useState(0)
+  
   const dispatch = useAppDispatch();
   const { orderProducts } = useAppSelector((store) => store.order);
+  const {userId}= useAuth()
 
   useEffect(() => {
     dispatch(getOrderProducts());
   }, [dispatch]);
 
+  
+  useEffect(() => {
+    const order= orderProducts.reduce((accumulator,currentValue)=> accumulator + currentValue.totalOrder,0)
+    const amount= orderProducts.reduce((accumulator,currentValue)=> accumulator + currentValue.totalOrder* Number(currentValue.product.productPrice),0)
+
+    setTotalOrder(order)
+    setTotalPrice(amount)
+
+  }, [orderProducts]);
+  
+
+  const increaseOrder = useCallback(
+    (order: IOrder) => {
+      let product = order.totalOrder;
+
+      const update = {
+        orderId: order._id,
+        totalOrder: product + 1,
+      };
+
+      dispatch(updateProductToCart(update));
+      toast.success("Updated to cart");
+    },
+    [dispatch]
+  );
+
+  const decreaseOrder = useCallback(async (order: IOrder) => {
+    let product = order.totalOrder
+    if (product > 0) {
+      const update = {
+        orderId: order._id,
+        totalOrder: product - 1
+      }
+      dispatch(updateProductToCart(update))
+      toast.success("Updated to cart")
+    } else {
+      try {
+        await axios.delete(`${AppConfig.API_URL}/delete-order/${order._id}`)
+      } catch (error) {
+        toast.error(errorMessage(error))
+      }
+      dispatch(setRemoveProduct(order))
+      toast.success("Deleted from cart")
+    }
+  }, [dispatch])
+
+const handleCreateOrderRequest = useCallback(async () => {
+  try {
+      const { data } = await axios.post(`${AppConfig.API_URL}/order-request`, {
+          products : orderProducts.map((o)=>o.product._id),
+       totalOrder:totalOrder,
+       totalPrice:totalPrice,
+       userId: userId
+      })
+      toast.success("order requested Successfully")
+  } catch (error) {
+      toast.error(errorMessage(error))
+
+  }
+}, [totalOrder , totalPrice , userId , orderProducts])
+
   return (
     <div>
+      <div className="my-6 flex justify-between items-center pb-4 px-4 border-b">
+        <h6 className="text-2xl font-bold">Cart</h6>
+          <Button
+            buttonType={"button"}
+            buttonColor={{
+              primary: true,
+            }}
+            onClick={handleCreateOrderRequest}
+          >
+            Create order
+          </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">S.N</TableHead>
+            {/* <TableHead className="w-[100px]">S.N</TableHead> */}
             <TableHead>Product name</TableHead>
             <TableHead>Product price</TableHead>
             <TableHead>Total amount</TableHead>
@@ -40,13 +129,39 @@ const Cart = () => {
               </TableCell>
               <TableCell>{order?.product?.productPrice}</TableCell>
               <TableCell>
-                {Number(order?.product?.productPrice) * Number(order?.totalOrder)}
+                {Number(order?.product?.productPrice) *
+                  Number(order?.totalOrder)}
               </TableCell>
               <TableCell className="">{order?.totalOrder}</TableCell>
-              <TableCell></TableCell>
+              <TableCell>
+                <div className="flex items-center border w-[150px] rounded-[6px] overflow-hidden">
+                  <button
+                    type="button"
+                    className="bg-red-500 px-4 py-1 text-white text-xl font-bold w-full"
+                    onClick={() => decreaseOrder(order)}
+                  >
+                    -
+                  </button>
+                  <span className="px-2 w-full text-center">{order.totalOrder}</span>
+                  <button
+                    type="button"
+                    className="bg-blue-500 px-4 py-1 text-white text-xl font-bold w-full"
+                    onClick={() => increaseOrder(order)}
+                  >
+                    +
+                  </button>
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
+        <TableFooter>
+        <TableRow>
+            <TableCell colSpan={2} className="text-xl font-bold">Total</TableCell>
+            <TableCell className="text-xl font-bold">{totalPrice}</TableCell>
+            <TableCell colSpan={2} className="text-xl font-bold">{totalOrder}</TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   );

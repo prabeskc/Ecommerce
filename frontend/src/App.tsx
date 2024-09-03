@@ -29,6 +29,7 @@ import Userlayout from "./layout/user-layout/userLayout";
 import Adminlayout from "./layout/user-layout/adminLayout";
 import UserDashboard from "./pages/dashboard/user-dashboard/UserDashboard";
 import Cart from "./pages/dashboard/carts/Cart";
+import Shipping from "./pages/dashboard/shipping/shipping";
 
 const App = () => {
   return (
@@ -72,6 +73,8 @@ const App = () => {
           <Route element={<Userlayout />}>
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/carts" element={<Cart />} />
+            <Route path="/shipping" element={<Shipping />} />
+
           </Route>
         </Route>
       </Routes>
