@@ -1,15 +1,21 @@
 import classNames from 'classnames'
 import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import { getOrderRequest } from '../../redux/slice/order-slice'
+import { getOrderRequest, getOrderRequestById } from '../../redux/slice/order-slice'
+import { useParams } from 'react-router-dom'
 
 const Stepper = () => {
+    const {id} = useParams()
+
     const dispatch = useAppDispatch()
     const {orderRequest} = useAppSelector((store)=>store.order)
 
     useEffect(()=>{
-        dispatch(getOrderRequest())
-    },[dispatch])
+      if (id){
+
+        dispatch(getOrderRequestById(id))
+      }
+    },[dispatch, id])
 
     const steps=[
         {

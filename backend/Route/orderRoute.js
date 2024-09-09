@@ -15,6 +15,7 @@ const {
   getOrderRequest,
   createPaymentIntent,
   updateOrderRequest,
+  getOrderRequestByUser,
 } = require("../Controller/orderRequestController");
 
 const router = express.Router();
@@ -30,6 +31,9 @@ router.get("/order-request/:id", getOrderRequestById);
 router.get("/order-request", getOrderRequest);
 router.put("/stripe-payment", createPaymentIntent);
 router.put("/order-request/:id", updateOrderRequest);
+
+router.get('/order-request/:id', getOrderRequestById);
+router.get('/order-request/user/:userId', getOrderRequestByUser);
 
 
 
